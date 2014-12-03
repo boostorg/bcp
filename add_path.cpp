@@ -193,6 +193,14 @@ void bcp_implementation::add_file(const fs::path& p)
    //
 static const std::pair<fs::path, fs::path>
    specials[] = {
+      std::pair<fs::path, fs::path>("boost/atomic/capabilities.hpp", "boost/atomic/detail"),
+      std::pair<fs::path, fs::path>("boost/chrono/chrono.hpp", "libs/chrono/src"),
+      std::pair<fs::path, fs::path>("boost/chrono/chrono.hpp", "libs/chrono/build"),
+      std::pair<fs::path, fs::path>("boost/cerrno.hpp", "libs/system/build"),
+      std::pair<fs::path, fs::path>("boost/cerrno.hpp", "libs/system/src"),
+      std::pair<fs::path, fs::path>("libs/thread/build", "boost/system"),
+      std::pair<fs::path, fs::path>("libs/thread/build", "boost/cerrno.hpp"),
+      std::pair<fs::path, fs::path>("libs/thread/build", "boost/chrono"),
       std::pair<fs::path, fs::path>("boost/filesystem/convenience.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/exception.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/fstream.hpp", "boost/filesystem.hpp"),
