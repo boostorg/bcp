@@ -40,6 +40,7 @@ install:
 
 script:
   - ./b2 -j3 tools/bcp
+  - mkdir ../bcp-output
   - dist/bin/bcp ${NAMESPACE:+--namespace=$NAMESPACE --namespace-alias} $LIB build boost_install headers ../bcp-output
   - cd ../bcp-output
   - ./bootstrap.sh
