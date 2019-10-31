@@ -41,11 +41,9 @@ install:
 script:
   - ./b2 -j3 tools/bcp
   - mkdir ../bcp-output
-  - dist/bin/bcp ${NAMESPACE:+--namespace=$NAMESPACE --namespace-alias} $LIB build boost_install headers ../bcp-output
+  - dist/bin/bcp ${NAMESPACE:+--namespace=$NAMESPACE --namespace-alias} $LIB build ../bcp-output
   - cd ../bcp-output
   - ./bootstrap.sh
-  - rm -rf libs/log
-  - rm -rf libs/test
   - ./b2 -j3 libs/$LIB/test link=static,shared
 
 notifications:
