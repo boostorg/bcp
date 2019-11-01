@@ -193,6 +193,8 @@ void bcp_implementation::add_file(const fs::path& p)
    //
 static const std::pair<fs::path, fs::path>
    specials[] = {
+      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "libs/predef/check"),
+      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "libs/predef/tools"),
       std::pair<fs::path, fs::path>("libs/test/build/Jamfile.v2", "libs/timer/src"),
       std::pair<fs::path, fs::path>("libs/test/build/Jamfile.v2", "libs/timer/build"),
       std::pair<fs::path, fs::path>("boost/atomic/capabilities.hpp", "boost/atomic/detail"),
