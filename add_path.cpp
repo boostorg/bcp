@@ -75,7 +75,7 @@ void bcp_implementation::add_directory(const fs::path& p)
       if(!m_dependencies.count(np)) 
       {
          m_dependencies[np] = p; // set up dependency tree
-         add_path(np);
+         add_pending_path(np);
       }
       ++i;
    }
@@ -181,7 +181,7 @@ void bcp_implementation::add_file(const fs::path& p)
             if(!m_dependencies.count(dep)) 
             {
                m_dependencies[dep] = p; // set up dependency tree
-               add_path(dep);
+               add_pending_path(dep);
             }
          }
          ++i;
@@ -292,7 +292,7 @@ static const std::pair<fs::path, fs::path>
          if(!m_dependencies.count(specials[n].second)) 
          {
             m_dependencies[specials[n].second] = p; // set up dependency tree
-            add_path(specials[n].second);
+            add_pending_path(specials[n].second);
          }
       }
    }
@@ -345,7 +345,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
             if(!m_dependencies.count(p.branch_path() / include_file)) 
             {
                m_dependencies[p.branch_path() / include_file] = p;
-               add_path(p.branch_path() / include_file);
+               add_pending_path(p.branch_path() / include_file);
             }
          }
          else if(fs::exists(m_boost_path / include_file))
@@ -353,7 +353,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
             if(!m_dependencies.count(include_file)) 
             {
                m_dependencies[include_file] = p;
-               add_path(include_file);
+               add_pending_path(include_file);
             }
          }
          ++i;
@@ -395,7 +395,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
          if(!m_dependencies.count(p.branch_path() / include_file)) 
          {
             m_dependencies[p.branch_path() / include_file] = p;
-            add_path(p.branch_path() / include_file);
+            add_pending_path(p.branch_path() / include_file);
          }
       }
       else if(fs::exists(m_boost_path / include_file))
@@ -403,7 +403,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
          if(!m_dependencies.count(include_file)) 
          {
             m_dependencies[include_file] = p;
-            add_path(include_file);
+            add_pending_path(include_file);
          }
       }
       else
