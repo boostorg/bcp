@@ -161,6 +161,8 @@ void bcp_implementation::copy_path(const fs::path& p)
             "(\\(\\s*)boost(\\s*\\))\\s*(\\(\\s*)phoenix(\\s*\\))"
          "|"
             "(\\(\\s*)boost(\\s*\\))"
+         "|"
+            "(BOOST_UNORDERED_CONSTRUCT_FROM_TUPLE[^\\)]*)boost(\\))"
          ")"
       );
 
