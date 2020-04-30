@@ -22,6 +22,8 @@
 
 void bcp_implementation::add_path(const fs::path& p)
 {
+   if (m_excluded.find(p) != m_excluded.end())
+      return;
    fs::path normalized_path = p;
     normalized_path.normalize();
    if(fs::exists(m_boost_path / normalized_path))
@@ -75,7 +77,8 @@ void bcp_implementation::add_directory(const fs::path& p)
       if(!m_dependencies.count(np)) 
       {
          m_dependencies[np] = p; // set up dependency tree
-         add_pending_path(np);
+         if (m_excluded.find(np) == m_excluded.end())
+            add_pending_path(np);
       }
       ++i;
    }

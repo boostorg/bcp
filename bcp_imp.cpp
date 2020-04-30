@@ -118,6 +118,16 @@ void bcp_implementation::set_namespace_list(bool b)
    m_list_mode = b;
 }
 
+void bcp_implementation::add_excluded(const char* p)
+{
+   if (!fs::exists(p))
+   {
+      std::cerr << "CAUTION: excluded path " << p << " does not exist." << std::endl;
+      return;
+   } 
+   m_excluded.insert(p);     
+}
+
 fs::path get_short_path(const fs::path& p)
 {
    // truncate path no more than "x/y":

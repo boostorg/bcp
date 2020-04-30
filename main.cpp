@@ -42,6 +42,7 @@ void show_usage()
       "   --unix-lines     make sure that all copied files use Unix style line endings\n"
       "   --namespace=name rename the boost namespace to name (also changes library names).\n"
       "   --namespace-alias Makes namespace boost an alias of the namespace set with --namespace.\n"
+      "   --exclude         path to exclude from the scan, can be repeated\n"
       "\n"
       "module-list:         a list of boost files or library names to copy\n"
       "html-file:           the name of a html file to which the report will be written\n"
@@ -151,6 +152,10 @@ int cpp_main(int argc, char* argv[])
          list_mode = true;
          papp->set_namespace_list(true);
       }
+      else if(0 == std::strncmp("--exclude=", argv[i], 10))
+      {
+         papp->add_excluded(argv[i] + 10);
+      }      
       else if(argv[i][0] == '-')
       {
          std::cout << "Error: Unknown argument " << argv[i] << std::endl;
