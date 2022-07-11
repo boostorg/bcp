@@ -53,7 +53,7 @@ jobs:
         run: ./b2 headers
         working-directory: ../boost-root
       - name: Generate user config
-        run: 'echo "using $TOOLSET : : ${{ matrix.compiler }} : <cxxflags>-std=${{ matrix.standard }} ;" > ~/user-config.jam'
+        run: 'echo "using $TOOLSET : : ${{ matrix.compiler }} ;" > ~/user-config.jam'
         working-directory: ../boost-root
       - name: Config info
         run: ./b2 libs/config/test//print_config_info
