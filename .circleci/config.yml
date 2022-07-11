@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  inspect:
     environment:
       - BOOST_LIBRARY=bcp
       - CXX_STANDARD=gnu++11
