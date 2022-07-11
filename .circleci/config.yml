@@ -6,7 +6,7 @@ jobs:
       - BOOST_LIBRARY=bcp
       - CXX_STANDARD=gnu++11
     docker:
-      - image: gcc:7
+      - image: gcc:9
     steps:
       - checkout
       - run:
@@ -55,3 +55,8 @@ jobs:
           name: Running Inspect
           command: |
             cd $BOOST_REMOVE && ../../dist/bin/inspect -text
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - inspect
