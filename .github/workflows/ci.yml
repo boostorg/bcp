@@ -60,4 +60,4 @@ jobs:
         working-directory: ../boost-root
       - name: TestCopy
         run: ./bootstrap.sh && ./b2 -j3 libs/program_options/build && ./b2 -j3 --with-program_options && ./b2 -j3
-        working-directory: ./bcp-output
+        working-directory: ../bcp-output
