@@ -36,7 +36,7 @@ jobs:
       - name: Install packages
         run: sudo apt install g++-12
       - name: Checkout main boost
-        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root && git submodule update --init libs/filesystem
       - name: Update tools/boostdep
         run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
@@ -44,7 +44,7 @@ jobs:
         run: cp -r $GITHUB_WORKSPACE/* tools/bcp
         working-directory: ../boost-root
       - name: Install deps
-        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" bcp
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" bcp filesystem
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
