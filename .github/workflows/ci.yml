@@ -36,7 +36,7 @@ jobs:
       - name: Install packages
         run: sudo apt install g++-12
       - name: Checkout main boost
-        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root && git submodule update --init libs/filesystem
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root && cd ./boost-root && git submodule update --init libs/filesystem
       - name: Update tools/boostdep
         run: git submodule update --init tools/boostdep
         working-directory: ../boost-root
