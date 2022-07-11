@@ -1,0 +1,66 @@
+# Copyright 2020 Evan Miller
+# Copyright 2020 Matt Borland
+# Copyright 2021 John Maddock
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at http://boost.org/LICENSE_1_0.txt)
+
+name: CI
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+  release:
+    types: [published, created, edited]
+jobs:
+  ubuntu-jammy:
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [ g++-12 ]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - uses: mstachniuk/ci-skip@v1
+        with:
+          commit-filter: '[skip ci];[ci skip];[CI SKIP];[SKIP CI];***CI SKIP***;***SKIP CI***;[windows];[Windows];[WINDOWS];[apple];[Apple];[APPLE]'
+          commit-filter-separator: ';'
+          fail-fast: true
+      - name: Set TOOLSET
+        run: echo ${{ matrix.compiler }} | awk '/^g/ { print "TOOLSET=gcc" } /^clang/ { print "TOOLSET=clang" }' >> $GITHUB_ENV
+      - name: Add repository
+        run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
+      - name: Install packages
+        run: sudo apt install g++-12
+      - name: Checkout main boost
+        run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
+      - name: Update tools/boostdep
+        run: git submodule update --init tools/boostdep
+        working-directory: ../boost-root
+      - name: Copy files
+        run: cp -r $GITHUB_WORKSPACE/* tools/bcp
+        working-directory: ../boost-root
+      - name: Install deps
+        run: python tools/boostdep/depinst/depinst.py -I example -g "--jobs 3" bcp
+        working-directory: ../boost-root
+      - name: Bootstrap
+        run: ./bootstrap.sh
+        working-directory: ../boost-root
+      - name: Generate headers
+        run: ./b2 headers
+        working-directory: ../boost-root
+      - name: Generate user config
+        run: 'echo "using $TOOLSET : : ${{ matrix.compiler }} : <cxxflags>-std=${{ matrix.standard }} ;" > ~/user-config.jam'
+        working-directory: ../boost-root
+      - name: Config info
+        run: ./b2 libs/config/test//print_config_info
+        working-directory: ../boost-root
+      - name: Test
+        run: ./b2 -j3 tools/bcp && mkdir ../bcp-output && dist/bin/bcp program_options build ../bcp-output
+        working-directory: ../boost-root
+      - name: TestCopy
+        run: ./bootstrap.sh && ./b2 -j3 libs/program_options/build && ./b2 -j3 --with-program_options && ./b2 -j3
+        working-directory: ./bcp-output
