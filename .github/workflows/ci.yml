@@ -59,5 +59,5 @@ jobs:
         run: ./b2 -j3 tools/bcp && mkdir ../bcp-output && dist/bin/bcp program_options build ../bcp-output
         working-directory: ../boost-root
       - name: TestCopy
-        run: ./bootstrap.sh && ./b2 -j3 libs/program_options/build && ./b2 -j3 --with-program_options && ./b2 -j3
-        working-directory: ../bcp-output
+        run: cd ../bcp-output && ./bootstrap.sh && ./b2 -j3 libs/program_options/build && ./b2 -j3 --with-program_options && ./b2 -j3
+        working-directory: ../boost-root
