@@ -34,7 +34,7 @@ jobs:
       - name: Add repository
         run: sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
       - name: Install packages
-        run: sudo apt install g++-12
+        run: sudo apt install g++-12 git xsltproc docbook-xsl docbook-xml
       - name: Checkout main boost
         run: git clone -b develop --depth 1 https://github.com/boostorg/boost.git ../boost-root
       - name: Update tools/boostdep
