@@ -518,7 +518,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
       const std::string* known_macros_end = known_macros + sizeof(known_macros)/sizeof(known_macros[0]);
       if(known_macros_end == std::find(known_macros, known_macros_end, i->str()))
       {
-         std::cerr << "CAUTION: don't know how to trace depenencies through macro: \"" << *i << "\" in file: " << p.string() << std::endl;
+         std::cerr << "CAUTION: don't know how to trace dependencies through macro: \"" << *i << "\" in file: " << p.string() << std::endl;
       }
       ++i;
    }
