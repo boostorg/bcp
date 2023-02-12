@@ -183,7 +183,7 @@ names of the headers you are actually including, or use the --scan option to sca
 * If you include the header of a library with separate source, then you get that libraries source and all 
 it's dependencies.  This is deliberate and in general those extra dependencies are needed.
 * When you include a header, bcp doesn't know what compiler you're using, so it follows all 
-possible preprocessor paths. If you're distributing a subset of Boost with you're application then that 
+possible preprocessor paths. If you're distributing a subset of Boost with your application then that 
 is what you want to have happen in general.
 
 The last point above can result in a substantial increase in the number of headers found compared to most 
