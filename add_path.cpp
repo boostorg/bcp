@@ -243,6 +243,7 @@ static const std::pair<fs::path, fs::path>
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/boost-install.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/boost-install-dirs.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "boostcpp.jam"),
+      std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "project-config.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "bootstrap.bat"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "bootstrap.sh"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "Jamroot"),
