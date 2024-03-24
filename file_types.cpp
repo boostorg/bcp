@@ -52,7 +52,7 @@ bool bcp_implementation::is_binary_file(const fs::path& p)
       "|"
       "(Jamfile|makefile|configure)",
       boost::regex::perl | boost::regex::icase);
-   return !boost::regex_match(p.leaf().generic_string(), e);
+   return !boost::regex_match(p.filename().generic_string(), e);
 
 }
 
