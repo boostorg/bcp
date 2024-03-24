@@ -15,6 +15,7 @@
 #include "bcp_imp.hpp"
 #include "fileview.hpp"
 #include <boost/regex.hpp>
+#include <boost/filesystem/directory.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/exception.hpp>
 #include <iostream>
@@ -24,14 +25,12 @@ void bcp_implementation::add_path(const fs::path& p)
 {
    if (m_excluded.find(p) != m_excluded.end())
       return;
-   fs::path normalized_path = p;
-    normalized_path.normalize();
-   if(fs::exists(m_boost_path / normalized_path))
+   if(fs::exists(m_boost_path / p))
    {
-      if(fs::is_directory(m_boost_path / normalized_path))
-         add_directory(normalized_path);
+      if(fs::is_directory(m_boost_path / p))
+         add_directory(p);
       else
-         add_file(normalized_path);
+         add_file(p);
    }
    else
    {
@@ -45,12 +44,12 @@ void bcp_implementation::add_directory(const fs::path& p)
    //
    // Don't add files created by build system:
    //
-   if((p.leaf() == "bin") || (p.leaf() == "bin-stage"))
+   if((p.filename() == "bin") || (p.filename() == "bin-stage"))
       return; 
    //
    // Don't add version control directories:
    //
-   if((p.leaf() == "CVS") || (p.leaf() == ".svn"))
+   if((p.filename() == "CVS") || (p.filename() == ".svn"))
       return; 
    //
    // don't add directories not under version control:
@@ -180,7 +179,7 @@ void bcp_implementation::add_file(const fs::path& p)
          {
             // only concatonate if it's a relative path
             // rather than a URL:
-            fs::path dep(p.branch_path() / s);
+            fs::path dep(p.parent_path() / s);
             if(!m_dependencies.count(dep)) 
             {
                m_dependencies[dep] = p; // set up dependency tree
@@ -355,13 +354,13 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
             continue;
          }
          include_file = i->str();
-         fs::path test_file(m_boost_path / p.branch_path() / include_file);
-         if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.branch_path().string() != "boost"))
+         fs::path test_file(m_boost_path / p.parent_path() / include_file);
+         if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.parent_path().string() != "boost"))
          {
-            if(!m_dependencies.count(p.branch_path() / include_file)) 
+            if(!m_dependencies.count(p.parent_path() / include_file)) 
             {
-               m_dependencies[p.branch_path() / include_file] = p;
-               add_pending_path(p.branch_path() / include_file);
+               m_dependencies[p.parent_path() / include_file] = p;
+               add_pending_path(p.parent_path() / include_file);
             }
          }
          else if(fs::exists(m_boost_path / include_file))
@@ -405,13 +404,13 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
          ++i;
          continue;
       }
-      fs::path test_file(m_boost_path / p.branch_path() / include_file);
-      if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.branch_path().string() != "boost"))
+      fs::path test_file(m_boost_path / p.parent_path() / include_file);
+      if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.parent_path().string() != "boost"))
       {
-         if(!m_dependencies.count(p.branch_path() / include_file)) 
+         if(!m_dependencies.count(p.parent_path() / include_file)) 
          {
-            m_dependencies[p.branch_path() / include_file] = p;
-            add_pending_path(p.branch_path() / include_file);
+            m_dependencies[p.parent_path() / include_file] = p;
+            add_pending_path(p.parent_path() / include_file);
          }
       }
       else if(fs::exists(m_boost_path / include_file))
