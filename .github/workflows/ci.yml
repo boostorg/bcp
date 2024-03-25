@@ -39,7 +39,10 @@ jobs:
       - name: Install packages
         run: sudo apt install g++-12 git xsltproc docbook-xsl docbook-xml
       - name: Checkout main boost
-        run: git clone -b develop --depth 1 https://github.com/${GITHUB_REPOSITORY/bcp/boost}.git ../boost-root
+        run: |
+          BOOST_GIT=https://github.com/${GITHUB_REPOSITORY/bcp/boost}.git
+          echo "BOOST_GIT: ${BOOST_GIT}"
+          git clone -b develop --depth 1 "${BOOST_GIT}" ../boost-root
       - name: Update tools/boostdep
         run: git submodule update --init
         working-directory: ../boost-root
