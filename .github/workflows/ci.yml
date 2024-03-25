@@ -48,7 +48,9 @@ jobs:
         run: git submodule update --init
         working-directory: ../boost-root
       - name: Copy files
-        run: cp -r $GITHUB_WORKSPACE/* tools/bcp
+        run: |
+          rm -rf tools/bcp/*
+          cp -rv $GITHUB_WORKSPACE/* tools/bcp
         working-directory: ../boost-root
       - name: Bootstrap
         run: ./bootstrap.sh
