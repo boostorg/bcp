@@ -7,14 +7,13 @@
 
 name: CI
 on:
+  pull_request:
   push:
     branches:
       - master
       - develop
+      - feature/**
       - modular
-  pull_request:
-  release:
-    types: [published, created, edited]
 jobs:
   ubuntu-jammy:
     strategy:
@@ -41,8 +40,10 @@ jobs:
       - name: Checkout main boost
         run: |
           BOOST_GIT=https://github.com/${GITHUB_REPOSITORY/bcp/boost}.git
+          BOOST_BRANCH=develop && ( test "${GITHUB_REF_NAME}" == "master" || test "${GITHUB_REF_NAME}" == "modular" ) && BOOST_BRANCH=${GITHUB_REF_NAME} || true
           echo "BOOST_GIT: ${BOOST_GIT}"
-          git clone -b develop --depth 1 "${BOOST_GIT}" ../boost-root
+          echo "BRANCH/TAG: ${BOOST_BRANCH}"
+          git clone -b "${BOOST_BRANCH}" --depth 1 "${BOOST_GIT}" '../boost-root'
       - name: Update tools/boostdep
         run: git submodule update --init
         working-directory: ../boost-root
