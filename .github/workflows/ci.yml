@@ -40,10 +40,15 @@ jobs:
       - name: Checkout main boost
         run: |
           BOOST_GIT=https://github.com/${GITHUB_REPOSITORY/bcp/boost}.git
+<<<<<<< HEAD
           BOOST_BRANCH=develop && ( test "${GITHUB_REF_NAME}" == "master" || test "${GITHUB_REF_NAME}" == "modular" ) && BOOST_BRANCH=${GITHUB_REF_NAME} || true
           echo "BOOST_GIT: ${BOOST_GIT}"
           echo "BRANCH/TAG: ${BOOST_BRANCH}"
           git clone -b "${BOOST_BRANCH}" --depth 1 "${BOOST_GIT}" '../boost-root'
+=======
+          echo "BOOST_GIT: ${BOOST_GIT}"
+          git clone -b develop --depth 1 "${BOOST_GIT}" ../boost-root
+>>>>>>> 2e60004 (Check on Boost git repo reference.)
       - name: Update tools/boostdep
         run: git submodule update --init
         working-directory: ../boost-root
