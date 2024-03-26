@@ -1,8 +1,8 @@
 /*
  *
  * Copyright (c) 2003 Dr John Maddock
- * Use, modification and distribution is subject to the 
- * Boost Software License, Version 1.0. (See accompanying file 
+ * Use, modification and distribution is subject to the
+ * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
  *
  * This file implements the following:
@@ -25,12 +25,13 @@ void bcp_implementation::add_path(const fs::path& p)
 {
    if (m_excluded.find(p) != m_excluded.end())
       return;
-   if(fs::exists(m_boost_path / p))
+   fs::path normalized_path = p.lexically_normal();
+   if(fs::exists(m_boost_path / normalized_path))
    {
-      if(fs::is_directory(m_boost_path / p))
-         add_directory(p);
+      if(fs::is_directory(m_boost_path / normalized_path))
+         add_directory(normalized_path);
       else
-         add_file(p);
+         add_file(normalized_path);
    }
    else
    {
@@ -45,12 +46,12 @@ void bcp_implementation::add_directory(const fs::path& p)
    // Don't add files created by build system:
    //
    if((p.filename() == "bin") || (p.filename() == "bin-stage"))
-      return; 
+      return;
    //
    // Don't add version control directories:
    //
    if((p.filename() == "CVS") || (p.filename() == ".svn"))
-      return; 
+      return;
    //
    // don't add directories not under version control:
    //
@@ -73,7 +74,7 @@ void bcp_implementation::add_directory(const fs::path& p)
       if(m_boost_path.string().size())
          s.erase(0, m_boost_path.string().size() + 1);
       fs::path np = s;
-      if(!m_dependencies.count(np)) 
+      if(!m_dependencies.count(np))
       {
          m_dependencies[np] = p; // set up dependency tree
          if (m_excluded.find(np) == m_excluded.end())
@@ -180,7 +181,7 @@ void bcp_implementation::add_file(const fs::path& p)
             // only concatonate if it's a relative path
             // rather than a URL:
             fs::path dep(p.parent_path() / s);
-            if(!m_dependencies.count(dep)) 
+            if(!m_dependencies.count(dep))
             {
                m_dependencies[dep] = p; // set up dependency tree
                add_pending_path(dep);
@@ -195,12 +196,6 @@ void bcp_implementation::add_file(const fs::path& p)
    //
 static const std::pair<fs::path, fs::path>
    specials[] = {
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "libs/predef/check"),
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "libs/predef/tools"),
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "tools/boost_install/boost-install.jam"),
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "tools/boost_install/boost-install-dirs.jam"),
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "tools/boost_install/Jamfile"),
-      std::pair<fs::path, fs::path>("tools/build/src/kernel/modules.jam", "libs/headers"),
       std::pair<fs::path, fs::path>("libs/test/build/Jamfile.v2", "libs/timer/src"),
       std::pair<fs::path, fs::path>("libs/test/build/Jamfile.v2", "libs/timer/build"),
       std::pair<fs::path, fs::path>("boost/atomic/capabilities.hpp", "boost/atomic/detail"),
@@ -225,14 +220,14 @@ static const std::pair<fs::path, fs::path>
       std::pair<fs::path, fs::path>("libs/thread/build", "boost/system"),
       std::pair<fs::path, fs::path>("libs/thread/build", "boost/cerrno.hpp"),
       std::pair<fs::path, fs::path>("libs/thread/build", "boost/chrono"),
-      std::pair<fs::path, fs::path>("boost/filesystem/convenience.hpp", "boost/filesystem.hpp"),
+      std::pair<fs::path, fs::path>("boost/filesystem/cstdio.hpp", "boost/filesystem.hpp"),
+      std::pair<fs::path, fs::path>("boost/filesystem/directory.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/exception.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/fstream.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/operations.hpp", "boost/filesystem.hpp"),
+      std::pair<fs::path, fs::path>("boost/filesystem/file_status.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem/path.hpp", "boost/filesystem.hpp"),
       std::pair<fs::path, fs::path>("boost/filesystem.hpp", "libs/filesystem/build"),
-      std::pair<fs::path, fs::path>("boost/filesystem.hpp", "libs/filesystem/v2"),
-      std::pair<fs::path, fs::path>("boost/filesystem.hpp", "libs/filesystem/v3"),
       std::pair<fs::path, fs::path>("boost/config.hpp", "boost/config"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "libs/config/checks"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "libs/config/test"),
@@ -241,6 +236,7 @@ static const std::pair<fs::path, fs::path>
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/BoostDetectToolset.cmake"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/boost-install.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/boost-install-dirs.jam"),
+      std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "tools/boost_install/Jamfile"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "boostcpp.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "project-config.jam"),
       std::pair<fs::path, fs::path>("tools/build/bootstrap.sh", "bootstrap.bat"),
@@ -304,7 +300,7 @@ static const std::pair<fs::path, fs::path>
    {
       if(0 == compare_paths(specials[n].first, p))
       {
-         if(!m_dependencies.count(specials[n].second)) 
+         if(!m_dependencies.count(specials[n].second))
          {
             m_dependencies[specials[n].second] = p; // set up dependency tree
             add_pending_path(specials[n].second);
@@ -320,7 +316,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
       "^[[:blank:]]*(?://@bcp[[:blank:]]+([^\\n]*)\n)?#[[:blank:]]*include[[:blank:]]*[\"<]([^\">]+)[\">]"
       );
 
-   if(!m_dependencies.count(p)) 
+   if(!m_dependencies.count(p))
       m_dependencies[p] = p; // set terminal dependency
 
    fileview view;
@@ -357,7 +353,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
          fs::path test_file(m_boost_path / p.parent_path() / include_file);
          if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.parent_path().string() != "boost"))
          {
-            if(!m_dependencies.count(p.parent_path() / include_file)) 
+            if(!m_dependencies.count(p.parent_path() / include_file))
             {
                m_dependencies[p.parent_path() / include_file] = p;
                add_pending_path(p.parent_path() / include_file);
@@ -365,7 +361,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
          }
          else if(fs::exists(m_boost_path / include_file))
          {
-            if(!m_dependencies.count(include_file)) 
+            if(!m_dependencies.count(include_file))
             {
                m_dependencies[include_file] = p;
                add_pending_path(include_file);
@@ -407,7 +403,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
       fs::path test_file(m_boost_path / p.parent_path() / include_file);
       if(fs::exists(test_file) && !fs::is_directory(test_file) && (p.parent_path().string() != "boost"))
       {
-         if(!m_dependencies.count(p.parent_path() / include_file)) 
+         if(!m_dependencies.count(p.parent_path() / include_file))
          {
             m_dependencies[p.parent_path() / include_file] = p;
             add_pending_path(p.parent_path() / include_file);
@@ -415,7 +411,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
       }
       else if(fs::exists(m_boost_path / include_file))
       {
-         if(!m_dependencies.count(include_file)) 
+         if(!m_dependencies.count(include_file))
          {
             m_dependencies[include_file] = p;
             add_pending_path(include_file);
@@ -431,7 +427,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
    //
    // Scan for any #include MACRO includes that we don't recognise.
    //
-   // Begin by declaring all of the macros that get #included that 
+   // Begin by declaring all of the macros that get #included that
    // we know about and are correctly handled as special cases:
    //
    static const std::string known_macros[] = {
@@ -539,7 +535,7 @@ void bcp_implementation::add_file_dependencies(const fs::path& p, bool scanfile)
    if(!scanfile)
    {
       //
-      // grab the name of the library to which the header belongs, 
+      // grab the name of the library to which the header belongs,
       // and if that library has source then add the source to our
       // list:
       //
