@@ -294,6 +294,8 @@ static const std::pair<fs::path, fs::path>
       std::pair<fs::path, fs::path>("boost/graph/rmat_graph_generator.hpp", "boost/graph/distributed/rmat_graph_generator.hpp"),
       std::pair<fs::path, fs::path>("boost/graph/strong_components.hpp", "boost/graph/distributed/strong_components.hpp"),
       std::pair<fs::path, fs::path>("boost/graph/two_bit_color_map.hpp", "boost/graph/distributed/two_bit_color_map.hpp"),
+      std::pair<fs::path, fs::path>("libs/context/build.jam", "libs/predef/tools/check/predef.jam"),
+      std::pair<fs::path, fs::path>("libs/test/build/Jamfile.v2", "libs/predef/tools/check/predef.jam"),
    };
 
    for(unsigned int n = 0; n < (sizeof(specials)/sizeof(specials[0])); ++n)
