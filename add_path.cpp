@@ -1,6 +1,7 @@
 /*
  *
  * Copyright (c) 2003 Dr John Maddock
+ * Copyright René Ferdinand Rivera Morell 2023
  * Use, modification and distribution is subject to the
  * Boost Software License, Version 1.0. (See accompanying file
  * LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -107,7 +108,23 @@ void bcp_implementation::add_file(const fs::path& p)
    {
       add_file_dependencies(p, false);
    }
-   if(is_jam_file(p) && m_namespace_name.size() && ((std::distance(p.begin(), p.end()) < 3) || (*p.begin() != "tools") || (*++p.begin() != "build")))
+   if(is_jam_file(p) && *p.begin() == "libs" && (std::distance(p.begin(), p.end()) == 3))
+   {
+      //
+      // Modular libs top jamfile has references to all the user level
+      // dependent libraries to also include.
+      //
+      static const boost::regex e(">/boost/([a-zA-Z_]+)");
+      fileview view(m_boost_path / p);
+      boost::regex_token_iterator<const char*> i(view.begin(), view.end(), e, 1);
+      boost::regex_token_iterator<const char*> j;
+      while(i != j)
+      {
+         m_lib_names.insert(*i);
+         ++i;
+      }
+   }
+   else if(is_jam_file(p) && m_namespace_name.size() && ((std::distance(p.begin(), p.end()) < 3) || (*p.begin() != "tools") || (*++p.begin() != "build")))
    {
       //
       // We're doing a rename of namespaces and library names
