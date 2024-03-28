@@ -43,25 +43,45 @@ void bcp_implementation::add_path(const fs::path& p)
 
 void bcp_implementation::add_directory(const fs::path& p)
 {
+   auto is_good_path = [this](const fs::path& p)
+   {
+        //
+        // Don't add files created by build system:
+        //
+        if((p.filename() == "bin") || (p.filename() == "bin-stage"))
+            return false;
+        //
+        // Don't add version control directories:
+        //
+        if((p.filename() == "CVS") || (p.filename() == ".svn") || (p.filename() == ".git"))
+            return false;
+        //
+        // Don't add CI directories:
+        //
+        if((p.filename() == ".github") || (p.filename() == ".drone")
+            || (p.filename() == ".circleci") || (p.filename() == ".ci"))
+            return false;
+        //
+        // Don't add CI files:
+        //
+        if((p.filename() == ".travis.yml") || (p.filename() == "appveyor.yml")
+            || (p.filename() == ".drone.star")
+            || (p.filename() == ".drone.jsonnet")
+            || (p.filename() == ".cirrus.yml")
+            || (p.filename() == "azure-pipelines.yml"))
+            return false;
+        //
+        // don't add directories not under version control:
+        //
+        if(m_cvs_mode && !fs::exists(m_boost_path / p / "CVS/Entries"))
+            return false;
+        if(m_svn_mode && !fs::exists(m_boost_path / p / ".svn/entries"))
+            return false;
+        return true;
+   };
+   if (!is_good_path(p)) return;
    //
-   // Don't add files created by build system:
-   //
-   if((p.filename() == "bin") || (p.filename() == "bin-stage"))
-      return;
-   //
-   // Don't add version control directories:
-   //
-   if((p.filename() == "CVS") || (p.filename() == ".svn"))
-      return;
-   //
-   // don't add directories not under version control:
-   //
-   if(m_cvs_mode && !fs::exists(m_boost_path / p / "CVS/Entries"))
-      return;
-   if(m_svn_mode && !fs::exists(m_boost_path / p / ".svn/entries"))
-      return;
-   //
-   // enermerate files and directories:
+   // enumerate files and directories:
    //
    fs::directory_iterator i(m_boost_path / p);
    fs::directory_iterator j;
@@ -75,7 +95,7 @@ void bcp_implementation::add_directory(const fs::path& p)
       if(m_boost_path.string().size())
          s.erase(0, m_boost_path.string().size() + 1);
       fs::path np = s;
-      if(!m_dependencies.count(np))
+      if(is_good_path(np) && !m_dependencies.count(np))
       {
          m_dependencies[np] = p; // set up dependency tree
          if (m_excluded.find(np) == m_excluded.end())
@@ -114,13 +134,13 @@ void bcp_implementation::add_file(const fs::path& p)
       // Modular libs top jamfile has references to all the user level
       // dependent libraries to also include.
       //
-      static const boost::regex e(">/boost/([a-zA-Z_]+)");
+      static const boost::regex e(">/boost/([a-zA-Z0-9_]+)");
       fileview view(m_boost_path / p);
       boost::regex_token_iterator<const char*> i(view.begin(), view.end(), e, 1);
       boost::regex_token_iterator<const char*> j;
       while(i != j)
       {
-         m_lib_names.insert(*i);
+         add_path(m_boost_path / "libs" / *i);
          ++i;
       }
    }
