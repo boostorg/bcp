@@ -128,7 +128,7 @@ void bcp_implementation::add_file(const fs::path& p)
    {
       add_file_dependencies(p, false);
    }
-   if(is_jam_file(p) && *p.begin() == "libs" && (std::distance(p.begin(), p.end()) == 3))
+   if(is_jam_file(p) && *p.begin() == "libs" && (std::distance(p.begin(), p.end()) >= 3))
    {
       //
       // Modular libs top jamfile has references to all the user level
@@ -140,7 +140,11 @@ void bcp_implementation::add_file(const fs::path& p)
       boost::regex_token_iterator<const char*> j;
       while(i != j)
       {
-         add_path(m_boost_path / "libs" / *i);
+         if (*i == "numeric_conversion") add_path(m_boost_path / "libs/numeric/conversion");
+         else if (*i == "interval") add_path(m_boost_path / "libs/numeric/interval");
+         else if (*i == "odeint") add_path(m_boost_path / "libs/numeric/odeint");
+         else if (*i == "ublas") add_path(m_boost_path / "libs/numeric/ublas");
+         else add_path(m_boost_path / "libs" / *i);
          ++i;
       }
    }
