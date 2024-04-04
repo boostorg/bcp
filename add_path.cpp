@@ -134,12 +134,14 @@ void bcp_implementation::add_file(const fs::path& p)
       // Modular libs top jamfile has references to all the user level
       // dependent libraries to also include.
       //
+      auto lib = *(++p.begin());
       static const boost::regex e(">/boost/([a-zA-Z0-9_]+)");
       fileview view(m_boost_path / p);
       boost::regex_token_iterator<const char*> i(view.begin(), view.end(), e, 1);
       boost::regex_token_iterator<const char*> j;
       while(i != j)
       {
+         std::cout << "INFO: Adding modular lib reference from: " << lib << " to: " << *i << "\n";
          if (*i == "numeric_conversion") add_path(m_boost_path / "libs/numeric/conversion");
          else if (*i == "interval") add_path(m_boost_path / "libs/numeric/interval");
          else if (*i == "odeint") add_path(m_boost_path / "libs/numeric/odeint");
