@@ -131,7 +131,7 @@ void bcp_implementation::add_file(const fs::path& p)
    if(is_jam_file(p) && *p.begin() == "libs" && (std::distance(p.begin(), p.end()) >= 3))
    {
       //
-      // Modular libs top jamfile has references to all the user level
+      // Modular libs jamfile(s) have references to all the user level
       // dependent libraries to also include.
       //
       auto lib = *(++p.begin());
@@ -149,6 +149,7 @@ void bcp_implementation::add_file(const fs::path& p)
          else add_path(m_boost_path / "libs" / *i);
          ++i;
       }
+      add_path(m_boost_path / "libs" / lib);
    }
    else if(is_jam_file(p) && m_namespace_name.size() && ((std::distance(p.begin(), p.end()) < 3) || (*p.begin() != "tools") || (*++p.begin() != "build")))
    {
