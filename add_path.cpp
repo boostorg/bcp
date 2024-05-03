@@ -310,7 +310,8 @@ static const std::pair<fs::path, fs::path>
       std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/test/src"),
       std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/test/build"),
       std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/predef/build.jam"),
-      std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/predef/check"),
+      std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/predef/tools/check"),
+      std::pair<fs::path, fs::path>("boost/test/detail/config.hpp", "libs/predef/check"), // libs/predef/check if obsolete, but may still be used
       std::pair<fs::path, fs::path>("boost/typeof.hpp", "boost/typeof/incr_registration_group.hpp"),
       std::pair<fs::path, fs::path>("boost/function_types/detail/pp_loop.hpp", "boost/function_types/detail/pp_cc_loop"),
       std::pair<fs::path, fs::path>("boost/function_types/components.hpp", "boost/function_types/detail/components_impl"),
